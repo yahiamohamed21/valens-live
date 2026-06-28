@@ -86,6 +86,7 @@ export interface Order {
     variant: string;
     imageColor: string;
     imageType: "powder" | "capsule" | "liquid";
+    image?: string;
   }[];
   totalPrice: number;
   paymentMethod: string;
