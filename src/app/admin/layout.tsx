@@ -1,18 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar } from "./components/Sidebar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
+import { decodeJwt } from "@/lib/api";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { locale, changeLanguage } = useApp();
+  const { locale, changeLanguage, fetchAdminData, currentUserRole } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("valens_jwt_token");
+      if (!storedToken) {
+        router.push("/login");
+        return;
+      }
+      const claims = decodeJwt(storedToken);
+      const role = claims?.role || claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      if (!role || role.toString().toLowerCase() !== "admin") {
+        router.push("/login");
+        return;
+      }
+      setCheckingAuth(false);
+    }
+  }, [router]);
+
+  useEffect(() => {
+    if (!checkingAuth && currentUserRole === "Admin") {
+      fetchAdminData();
+    }
+  }, [pathname, checkingAuth, currentUserRole, fetchAdminData]);
 
   const getActiveTabName = () => {
     const segments = pathname.split("/");
@@ -29,6 +55,18 @@ export default function AdminLayout({
     if (lastSegment === "settings") return locale === "ar" ? "الإعدادات" : "SETTINGS";
     return lastSegment.toUpperCase();
   };
+
+  if (checkingAuth) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-main-bg text-white">
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-3xs font-extrabold uppercase tracking-widest text-primary-coral animate-pulse">
+            Verifying Admin Authorization...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-main-bg text-white font-sans antialiased">

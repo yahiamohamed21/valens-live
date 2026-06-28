@@ -93,7 +93,7 @@ export default function CheckoutPage() {
   const finalTotal = taxableAmount + shippingCost + taxAmount;
 
   // Form submit handler
-  const handleConfirmOrder = (e: React.FormEvent) => {
+  const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!firstName || !lastName || !phone || !email || !address || !city) {
@@ -132,8 +132,12 @@ export default function CheckoutPage() {
       couponCode: activeCoupon?.code || undefined
     };
 
-    const newOrder = placeOrder(orderPayload);
-    setPlacedOrder(newOrder);
+    try {
+      const newOrder = await placeOrder(orderPayload);
+      setPlacedOrder(newOrder);
+    } catch (err) {
+      // Errors are handled inside placeOrder with a toast
+    }
   };
 
   // If cart is empty and order hasn't been placed, redirect to products

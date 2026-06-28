@@ -63,13 +63,7 @@ export const Navbar: React.FC = () => {
             >
               {t("storefront.navbar.contact")}
             </Link>
-            <Link
-              href="/admin"
-              className="rounded-full border border-primary-coral/20 bg-primary-coral/5 px-3.5 py-1 text-xs font-bold tracking-wider text-primary-coral hover:bg-primary-coral hover:text-main-bg transition-luxury"
-            >
-              {t("storefront.navbar.admin")}
-            </Link>
-          </nav>
+           </nav>
         </div>
 
         {/* Search, Cart & Account */}

@@ -21,10 +21,10 @@ export default function CartPage() {
 
   const [couponCodeInput, setCouponCodeInput] = useState("");
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (couponCodeInput.trim()) {
-      applyCoupon(couponCodeInput.trim());
+      await applyCoupon(couponCodeInput.trim());
       setCouponCodeInput("");
     }
   };

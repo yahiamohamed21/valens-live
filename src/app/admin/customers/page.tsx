@@ -1,10 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 
 export default function AdminCustomersPage() {
-  const { customers } = useApp();
+  const { customers, fetchAdminData } = useApp();
+
+  useEffect(() => {
+    fetchAdminData();
+  }, [fetchAdminData]);
 
   return (
     <div className="flex flex-col gap-6">
